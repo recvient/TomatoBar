@@ -25,3 +25,6 @@
 "TBTimer.onRestStart.skip.title" = "건너뛰기";
 "TBTimer.onRestFinish.title" = "휴식 시간 종료";
 "TBTimer.onRestFinish.body" = "다시 작업을 시작하세요!";
+
+"TBPopoverView.pause.label" = "Pause";
+"TBPopoverView.resume.label" = "Resume";

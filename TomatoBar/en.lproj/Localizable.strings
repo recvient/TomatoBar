@@ -25,3 +25,6 @@
 "TBTimer.onRestStart.skip.title" = "Skip";
 "TBTimer.onRestFinish.title" = "Break is over";
 "TBTimer.onRestFinish.body" = "Keep up the good work!";
+
+"TBPopoverView.pause.label" = "Pause";
+"TBPopoverView.resume.label" = "Resume";

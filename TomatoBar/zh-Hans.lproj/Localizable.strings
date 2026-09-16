@@ -25,3 +25,6 @@
 "TBTimer.onRestStart.skip.title" = "跳过";
 "TBTimer.onRestFinish.title" = "休息结束";
 "TBTimer.onRestFinish.body" = "继续努力!";
+
+"TBPopoverView.pause.label" = "Pause";
+"TBPopoverView.resume.label" = "Resume";

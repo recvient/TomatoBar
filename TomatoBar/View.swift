@@ -161,6 +161,17 @@ struct TBPopoverView: View {
             .controlSize(.large)
             .keyboardShortcut(.defaultAction)
 
+            Button {
+                timer.pauseResume()
+            } label: {
+                Label(NSLocalizedString(timer.isPaused ? "TBPopoverView.resume.label" : "TBPopoverView.pause.label",
+                                        comment: "Pause or resume timer"),
+                      systemImage: timer.isPaused ? "play.fill" : "pause.fill")
+                    .frame(maxWidth: .infinity)
+            }
+            .disabled(timer.timer == nil)
+            .keyboardShortcut("p")
+
             Picker("", selection: $activeChildView) {
                 Text(NSLocalizedString("TBPopoverView.intervals.label",
                                        comment: "Intervals label")).tag(ChildView.intervals)

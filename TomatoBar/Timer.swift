@@ -18,6 +18,8 @@ class TBTimer: ObservableObject {
     private var notificationCenter = TBNotificationCenter()
     private var finishTime: Date!
     private var timerFormatter = DateComponentsFormatter()
+    @Published private(set) var isPaused = false
+    private var pausedTimeLeft: TimeInterval = 0
     @Published var timeLeftString: String = ""
     @Published var timer: DispatchSourceTimer?
 
@@ -105,6 +107,8 @@ class TBTimer: ObservableObject {
         switch host.lowercased() {
         case "startstop":
             startStop()
+        case "pauseresume":
+            pauseResume()
         default:
             print("url handling error: unknown command \(host)")
             return
@@ -115,20 +119,40 @@ class TBTimer: ObservableObject {
         stateMachine <-! .startStop
     }
 
+    func pauseResume() {
+        guard timer != nil else { return }
+        if isPaused {
+            finishTime = Date().addingTimeInterval(pausedTimeLeft)
+            isPaused = false
+            if stateMachine.state == .work { player.startTicking() }
+        } else {
+            let remaining = finishTime.timeIntervalSinceNow
+            guard remaining > 0 else { return }
+            pausedTimeLeft = remaining
+            isPaused = true
+            player.stopTicking()
+        }
+        updateTimeLeft()
+    }
+
     func skipRest() {
         stateMachine <-! .skipRest
     }
 
     func updateTimeLeft() {
-        timeLeftString = timerFormatter.string(from: Date(), to: finishTime)!
+        let remaining = isPaused ? pausedTimeLeft : (finishTime?.timeIntervalSinceNow ?? 0)
+        timeLeftString = timerFormatter.string(from: max(0, ceil(remaining))) ?? "00:00"
         if timer != nil, showTimerInMenuBar {
-            TBStatusItem.shared.setTitle(title: timeLeftString)
+            TBStatusItem.shared.setTitle(title: isPaused ? "Ⅱ " + timeLeftString : timeLeftString)
         } else {
             TBStatusItem.shared.setTitle(title: nil)
         }
     }
 
     private func startTimer(seconds: Int) {
+        timer?.cancel()
+        isPaused = false
+        pausedTimeLeft = 0
         finishTime = Date().addingTimeInterval(TimeInterval(seconds))
 
         let queue = DispatchQueue(label: "Timer")
@@ -140,13 +164,16 @@ class TBTimer: ObservableObject {
     }
 
     private func stopTimer() {
-        timer!.cancel()
+        timer?.cancel()
         timer = nil
+        isPaused = false
+        pausedTimeLeft = 0
     }
 
     private func onTimerTick() {
         /* Cannot publish updates from background thread */
         DispatchQueue.main.async { [self] in
+            guard timer != nil, !isPaused else { return }
             updateTimeLeft()
             let timeLeft = finishTime.timeIntervalSince(Date())
             if timeLeft <= 0 {

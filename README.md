@@ -1,3 +1,18 @@
+# TomatoBar with Pause / Resume
+
+Personal fork of [ivoronin/TomatoBar](https://github.com/ivoronin/TomatoBar).
+
+Adds a Pause / Resume button (⌘P while the popover is open) for work and break intervals. Pausing preserves the remaining time, silences ticking, and shows Ⅱ next to the menu bar countdown. Stop still resets the session. `tomatobar://pauseresume` also toggles pause.
+
+Local version: `3.6.1-pause.1`. Requires macOS 12 or later and Xcode to build. Existing settings and launch-at-login identity are retained.
+
+Build and launch: `./script/build_and_run.sh --verify`.
+Timer behavior checks: `./script/test_timer.sh` after building. These compile the actual timer and state machine with mock sound, notification, status-item, and shortcut services.
+
+The build script uses local ad hoc signing, including the legacy login helper. No Apple Developer account is required for this local build.
+
+---
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/ivoronin/TomatoBar/main/TomatoBar/Assets.xcassets/AppIcon.appiconset/icon_128x128%402x.png" width="128" height="128"/>
 <p>
